@@ -1,10 +1,23 @@
 import type { UUID, Character } from "@elizaos/core";
 
-const BASE_URL =
-    import.meta.env.VITE_SERVER_BASE_URL ||
-    `${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`;
+// Map client ports to their corresponding server ports
+const PORT_MAP: Record<string, string> = {
+    "5174": "3001", // Shakespeare
+    "5176": "3003", // Other
+    "5177": "3004", // Dev
+    "5175": "3002", // Metaweb
+};
 
-console.log({ BASE_URL });
+// Get the current client port from window.location or default environment variable
+const currentClientPort = window.location.port || import.meta.env.VITE_CLIENT_PORT || "5173";
+const serverPort = PORT_MAP[currentClientPort] || "3000";
+
+// Construct the base URL with the correct server port
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:${serverPort}`;
+
+console.log("Client Port:", currentClientPort);
+console.log("Server Port:", serverPort);
+console.log("API Base URL:", BASE_URL);
 
 const fetcher = async ({
     url,
