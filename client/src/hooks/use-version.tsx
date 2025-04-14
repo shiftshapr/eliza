@@ -5,7 +5,7 @@ import semver from "semver";
 import { ToastAction } from "@/components/ui/toast";
 import { NavLink } from "react-router";
 
-export default function useVersion() {
+export function useVersion() {
     const { toast } = useToast();
 
     async function getLatestRelease(repo: string) {

@@ -7,6 +7,9 @@ import path from "node:path";
 export default defineConfig(({ mode }) => {
     const envDir = path.resolve(__dirname, "..");
     const env = loadEnv(mode, envDir, "");
+    const port = parseInt(process.env.PORT || env.VITE_CLIENT_PORT || "5173", 10);
+    const isProd = mode === 'production';
+    
     return {
         plugins: [
             react(),
@@ -23,11 +26,25 @@ export default defineConfig(({ mode }) => {
                 env.SERVER_PORT || "3000"
             ),
             "import.meta.env.VITE_SERVER_URL": JSON.stringify(
-                env.SERVER_URL || "http://localhost"
+                env.VITE_SERVER_URL || "http://localhost"
             ),
             "import.meta.env.VITE_SERVER_BASE_URL": JSON.stringify(
                 env.SERVER_BASE_URL
             )
+        },
+        server: {
+            host: '0.0.0.0',
+            port: port,
+            strictPort: true,
+            hmr: isProd ? false : {
+                clientPort: port,
+                host: '0.0.0.0'
+            }
+        },
+        preview: {
+            host: '0.0.0.0',
+            port: port,
+            strictPort: true
         },
         build: {
             outDir: "dist",
@@ -35,6 +52,12 @@ export default defineConfig(({ mode }) => {
             cssMinify: true,
             sourcemap: false,
             cssCodeSplit: true,
+            assetsDir: 'assets',
+            rollupOptions: {
+                output: {
+                    manualChunks: undefined
+                }
+            }
         },
         resolve: {
             alias: {
